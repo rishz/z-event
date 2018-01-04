@@ -15,6 +15,7 @@ public class Event {
     private List<User> interested;
     private User creator;
     private String description;
+    private List categories;
 
     @Override
     public String toString() {
@@ -26,7 +27,16 @@ public class Event {
                 ", interested=" + interested +
                 ", creator=" + creator +
                 ", description='" + description + '\'' +
+                ", categories=" + categories +
                 '}';
+    }
+
+    public List getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List categories) {
+        this.categories = categories;
     }
 
     public UUID getEvent_uuid() {

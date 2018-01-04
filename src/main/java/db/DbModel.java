@@ -7,10 +7,10 @@ import java.util.UUID;
 
 public interface DbModel {
     UUID createUser(String username, String password);
-    UUID createEvent(String eventName, String creator, String name, String description, Date date);
+    UUID createEvent(String name, String creator, String description, Date date, List<String> categories);
     List getAllEvents();
     List gettAllGoingUsers(UUID event);
     List getAllInterestedUsers(UUID event);
-    boolean existEvent();
+    boolean existEvent(UUID event);
 
 }
