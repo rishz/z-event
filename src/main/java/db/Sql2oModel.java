@@ -1,5 +1,6 @@
 package db;
 
+import model.Event;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import utils.RandomUuidGenerator;
@@ -47,7 +48,6 @@ public class Sql2oModel implements DbModel {
                     .addParameter("name", name)
                     .addParameter("creator", creator)
                     .addParameter("description", description)
-                    .addParameter("approved", false)
                     .addParameter("date", date)
                     .executeUpdate();
             return event_uuid;
@@ -56,7 +56,12 @@ public class Sql2oModel implements DbModel {
 
     @Override
     public List getAllEvents() {
-        return null;
+        try (Connection conn = sql2o.open()) {
+            List<Event> events = conn.createQuery("select * from events")
+                    .executeAndFetch(Event.class);
+            events.forEach((event) -> event.setCategories(getCategoriesFor(conn, post.getPost_uuid())));
+            return events;
+        }
     }
 
     @Override

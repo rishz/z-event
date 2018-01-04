@@ -16,4 +16,72 @@ public class Event {
     private User creator;
     private String description;
 
+    @Override
+    public String toString() {
+        return "Event{" +
+                "event_uuid=" + event_uuid +
+                ", name='" + name + '\'' +
+                ", date=" + date +
+                ", going=" + going +
+                ", interested=" + interested +
+                ", creator=" + creator +
+                ", description='" + description + '\'' +
+                '}';
+    }
+
+    public UUID getEvent_uuid() {
+        return event_uuid;
+    }
+
+    public void setEvent_uuid(UUID event_uuid) {
+        this.event_uuid = event_uuid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public List<User> getGoing() {
+        return going;
+    }
+
+    public void setGoing(List<User> going) {
+        this.going = going;
+    }
+
+    public List<User> getInterested() {
+        return interested;
+    }
+
+    public void setInterested(List<User> interested) {
+        this.interested = interested;
+    }
+
+    public User getCreator() {
+        return creator;
+    }
+
+    public void setCreator(User creator) {
+        this.creator = creator;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
