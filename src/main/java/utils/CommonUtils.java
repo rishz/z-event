@@ -6,9 +6,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.IOException;
 import java.io.StringWriter;
 
-/**
- * Created by rishabhshukla on 05/01/18.
- */
 public class CommonUtils {
     public static String dataToJson(Object data) {
         try {
