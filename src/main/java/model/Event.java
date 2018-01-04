@@ -13,6 +13,7 @@ public class Event {
     private Date date;
     private List<User> going;
     private List<User> interested;
-
+    private User creator;
+    private String description;
 
 }
