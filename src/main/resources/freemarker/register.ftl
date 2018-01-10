@@ -13,30 +13,30 @@
     <form class="form-horizontal" action="/register" role="form" method="post">
 
         <div class="form-group">
-            <label for="username" class="col-sm-2 control-label">Username: </label>
+            <label for="email" class="col-sm-2 control-label">Username: </label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="username" placeholder="Username" value="${username!}" />
+                <input type="text" class="form-control" username="email" placeholder="Username" value="${email!}" />
             </div>
         </div>
 
         <div class="form-group">
             <label for="email" class="col-sm-2 control-label">E-Mail: </label>
             <div class="col-sm-10">
-                <input type="email" class="form-control" name="email" placeholder="E-Mail" value="${email!}" />
+                <input type="email" class="form-control" username="email" placeholder="E-Mail" value="${email!}" />
             </div>
         </div>
 
         <div class="form-group">
             <label for="password" class="col-sm-2 control-label">Password: </label>
             <div class="col-sm-10">
-                <input type="password" class="form-control" name="password" placeholder="Password" />
+                <input type="password" class="form-control" username="password" placeholder="Password" />
             </div>
         </div>
 
         <div class="form-group">
             <label for="password2" class="col-sm-2 control-label">Password <small>(repeat)</small>:</label>
             <div class="col-sm-10">
-                <input type="password" class="form-control" name="password2"/>
+                <input type="password" class="form-control" username="password2"/>
             </div>
         </div>
 
