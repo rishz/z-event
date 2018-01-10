@@ -21,6 +21,7 @@ import static spark.Spark.*;
 public class WebConfig {
 
     private static final String USER_SESSION_ID = "user";
+    private static final String EVENT_ID = "event";
     private AuthService service;
 
 
@@ -31,7 +32,6 @@ public class WebConfig {
     }
 
     private void setupRoutes() {
-
         get("/", (req, res) -> {
             User user = getAuthenticatedUser(req);
             Map<String, Object> map = new HashMap<>();
@@ -59,12 +59,27 @@ public class WebConfig {
             return new ModelAndView(map, "timeline.ftl");
         }, new FreeMarkerEngine());
 
+        put("/:event_uuid", (req,res) -> {
+            Event event = getEvent(req);
+            Map<String, Object> map = new HashMap<>();
+            map.put("pageTitle", "Event Updated");
+            map.put("event", event);
+            return new ModelAndView(map, "timeline.ftl");
+        });
+
+        delete("/:event_uuid", (req,res) -> {
+            removeEvent(req);
+            Map<String, Object> map = new HashMap<>();
+            map.put("pageTitle", "Event Deleted");
+            return new ModelAndView(map, "timeline.ftl");
+
+        });
+
         get("/t/:username", (req, res) -> {
             String username = req.params(":username");
             User profileUser = service.getUserbyUsername(username);
 
             User authUser = getAuthenticatedUser(req);
-            boolean followed = false;
 
             List<Event> events = service.getUserEvents(profileUser);
 
@@ -206,5 +221,18 @@ public class WebConfig {
 
     private User getAuthenticatedUser(Request request) {
         return request.session().attribute(USER_SESSION_ID);
+    }
+
+    private void addEvent(Request request, Event e) {
+        request.session().attribute(EVENT_ID, e);
+    }
+
+    private void removeEvent(Request request) {
+        request.session().removeAttribute(EVENT_ID);
+
+    }
+
+    private Event getEvent(Request request) {
+        return request.session().attribute(EVENT_ID);
     }
 }

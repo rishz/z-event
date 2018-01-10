@@ -1,5 +1,6 @@
 package service;
 
+import dao.EventDao;
 import dao.UserDao;
 import model.Event;
 import model.LoginResult;
@@ -8,9 +9,7 @@ import utils.PasswordUtil;
 
 import java.util.List;
 
-/**
- * Created by rishabhshukla on 10/01/18.
- */
+
 public class AuthService {
 
     private UserDao userDao;

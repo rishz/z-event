@@ -1,12 +1,12 @@
 package db;
 
 import model.Event;
+import model.User;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import utils.RandomUuidGenerator;
 import utils.UuidGenerator;
 
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,13 +21,14 @@ public class Sql2oModel implements DbModel {
     }
 
     @Override
-    public UUID createUser(String username, String password) {
+    public UUID createUser(User user) {
         try (Connection conn = sql2o.beginTransaction()) {
             UUID userUuid = uuidGenerator.generate();
-            conn.createQuery("insert into users(user_uuid, username, password) VALUES (:user_uuid, :username, :password)")
+            conn.createQuery("insert into users(user_uuid, username, email, password) VALUES (:user_uuid, :username, :email, :password)")
                     .addParameter("user_uuid", userUuid)
-                    .addParameter("username", username)
-                    .addParameter("password", password)
+                    .addParameter("username", user.getUsername())
+                    .addParameter("email", user.getEmail())
+                    .addParameter("password", user.getPassword())
                     .executeUpdate();
             conn.commit();
             return userUuid;
@@ -35,17 +36,17 @@ public class Sql2oModel implements DbModel {
     }
 
     @Override
-    public UUID createEvent(String name, String creator, String description, Date date, List<String> categories) {
+    public UUID createEvent(Event e) {
         try (Connection conn = sql2o.open()) {
             UUID event_uuid = uuidGenerator.generate();
-            conn.createQuery("insert into events(event_uuid, name, creator, description, date) VALUES (:event_uuid, :name, :creator, :description, :date)")
+            conn.createQuery("insert into events(event_uuid, name, organizer, description, date) VALUES (:event_uuid, :name, :organizer, :description, :date)")
                     .addParameter("event_uuid", event_uuid)
-                    .addParameter("name", name)
-                    .addParameter("creator", creator)
-                    .addParameter("description", description)
-                    .addParameter("date", date)
+                    .addParameter("name", e.getName())
+                    .addParameter("organizer", e.getOrganizer())
+                    .addParameter("description", e.getDescription())
+                    .addParameter("date", e.getDate())
                     .executeUpdate();
-            categories.forEach((category) ->
+            e.getCategories().forEach((category) ->
                     conn.createQuery("insert into events_categories(event_uuid, category) VALUES (:event_uuid, :category)")
                             .addParameter("event_uuid", event_uuid)
                             .addParameter("category", category)
@@ -72,22 +73,52 @@ public class Sql2oModel implements DbModel {
     }
 
     @Override
-    public List gettAllGoingUsers(UUID event) {
-        return null;
+    public List<String> getAllGoingUsers(UUID event) {
+        try (Connection conn = sql2o.open()) {
+            return conn.createQuery("select going_users from events where event_uuid=:event_uuid")
+                    .addParameter("event_uuid", event)
+                    .executeAndFetch(String.class);
+        }
     }
 
     @Override
-    public List getAllInterestedUsers(UUID event) {
-        return null;
+    public List<String> getAllInterestedUsers(UUID event) {
+        try (Connection conn = sql2o.open()) {
+            return conn.createQuery("select interested_users from events where event_uuid=:event_uuid")
+                    .addParameter("event_uuid", event)
+                    .executeAndFetch(String.class);
+        }
     }
 
     @Override
     public boolean existEvent(UUID event) {
         try (Connection conn = sql2o.open()) {
-            List<Event> events = conn.createQuery("select * from posts where post_uuid=:post")
+            List<Event> events = conn.createQuery("select * from events where event_uuid=:event")
                     .addParameter("event", event)
                     .executeAndFetch(Event.class);
             return events.size() > 0;
+        }
+    }
+
+    @Override
+    public void addGoingUser(String username, UUID event) {
+        try (Connection conn = sql2o.open()) {
+            conn.createQuery("insert into events(event_uuid, going_users) VALUES (:event_uuid, :going_users)")
+                    .addParameter("event_uuid", event)
+                    .addParameter("going_users", username)
+                    .executeUpdate();
+            conn.commit();;
+        }
+    }
+
+    @Override
+    public void addInterestedUser(String username, UUID event) {
+        try (Connection conn = sql2o.open()) {
+            conn.createQuery("insert into events(event_uuid, interested_users) VALUES (:event_uuid, :interested_users)")
+                    .addParameter("event_uuid", event)
+                    .addParameter("interested_users", username)
+                    .executeUpdate();
+            conn.commit();;
         }
     }
 }

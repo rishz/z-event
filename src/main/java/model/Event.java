@@ -13,7 +13,7 @@ public class Event {
     private Date date;
     private List<User> going;
     private List<User> interested;
-    private User creator;
+    private User organizer;
     private String description;
     private List categories;
 
@@ -25,7 +25,7 @@ public class Event {
                 ", date=" + date +
                 ", going=" + going +
                 ", interested=" + interested +
-                ", creator=" + creator +
+                ", organizer=" + organizer +
                 ", description='" + description + '\'' +
                 ", categories=" + categories +
                 '}';
@@ -79,12 +79,12 @@ public class Event {
         this.interested = interested;
     }
 
-    public User getCreator() {
-        return creator;
+    public User getOrganizer() {
+        return organizer;
     }
 
-    public void setCreator(User creator) {
-        this.creator = creator;
+    public void setOrganizer(User creator) {
+        this.organizer = creator;
     }
 
     public String getDescription() {
