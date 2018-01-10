@@ -50,4 +50,8 @@ public class AuthService {
     public User getUserbyUsername(String username) {
         return userDao.getUserbyUsername(username);
     }
+
+    public void addEvent(Event event) {
+        eventDao.insertEvent(event);
+    }
 }

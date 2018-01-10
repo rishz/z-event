@@ -12,9 +12,7 @@ import spark.Request;
 import spark.template.freemarker.FreeMarkerEngine;
 import spark.utils.StringUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static spark.Spark.*;
 
@@ -37,8 +35,6 @@ public class WebConfig {
             Map<String, Object> map = new HashMap<>();
             map.put("pageTitle", "Timeline");
             map.put("user", user);
-//            List<Message> messages = service.getUserFullTimelineMessages(user);
-//            map.put("messages", messages);
             return new ModelAndView(map, "timeline.ftl");
         }, new FreeMarkerEngine());
         before("/", (req, res) -> {
@@ -60,15 +56,23 @@ public class WebConfig {
         }, new FreeMarkerEngine());
 
         put("/:event_uuid", (req,res) -> {
-            Event event = getEvent(req);
+            User user = getAuthenticatedUser(req);
+            MultiMap<String> params = new MultiMap<String>();
+
+            Event e = new Event();
+            e.setOrganizer(user);
+            e.setDate(Date.parse(req.params("date"));
+            e.setDescription(req.params("description"));
+            e.setCategories(Arrays.asList(req.params("categories").split(",")));
+            BeanUtils.populate(e, params);
+            service.addEvent(e);
             Map<String, Object> map = new HashMap<>();
             map.put("pageTitle", "Event Updated");
-            map.put("event", event);
+            map.put("event", e);
             return new ModelAndView(map, "timeline.ftl");
         });
 
         delete("/:event_uuid", (req,res) -> {
-            removeEvent(req);
             Map<String, Object> map = new HashMap<>();
             map.put("pageTitle", "Event Deleted");
             return new ModelAndView(map, "timeline.ftl");
@@ -100,6 +104,31 @@ public class WebConfig {
                 halt(404, "User not Found");
             }
         });
+
+        post("/event", (req, res) -> {
+            User user = getAuthenticatedUser(req);
+            MultiMap<String> params = new MultiMap<String>();
+            Event e = new Event();
+            e.setOrganizer(user);
+            e.setDate(Date.parse(req.params("date"));
+            e.setDescription(req.params("description"));
+            e.setCategories(Arrays.asList(req.params("categories").split(",")));
+            BeanUtils.populate(e, params);
+            service.addEvent(e);
+            res.redirect("/");
+            return null;
+        });
+		/*
+		 * Checks if the user is authenticated
+		 */
+        before("/event", (req, res) -> {
+            User authUser = getAuthenticatedUser(req);
+            if(authUser == null) {
+                res.redirect("/login");
+                halt();
+            }
+        });
+
 
 
 		/*
@@ -223,16 +252,4 @@ public class WebConfig {
         return request.session().attribute(USER_SESSION_ID);
     }
 
-    private void addEvent(Request request, Event e) {
-        request.session().attribute(EVENT_ID, e);
-    }
-
-    private void removeEvent(Request request) {
-        request.session().removeAttribute(EVENT_ID);
-
-    }
-
-    private Event getEvent(Request request) {
-        return request.session().attribute(EVENT_ID);
-    }
 }
