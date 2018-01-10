@@ -1,9 +1,12 @@
 package service;
 
 import dao.UserDao;
+import model.Event;
 import model.LoginResult;
 import model.User;
 import utils.PasswordUtil;
+
+import java.util.List;
 
 /**
  * Created by rishabhshukla on 10/01/18.
@@ -11,6 +14,8 @@ import utils.PasswordUtil;
 public class AuthService {
 
     private UserDao userDao;
+
+    private EventDao eventDao;
 
     public LoginResult checkUser(User user) {
         LoginResult result = new LoginResult();
@@ -24,6 +29,14 @@ public class AuthService {
         }
 
         return result;
+    }
+
+    public List<Event> getPublicEvents(){
+        return eventDao.getPublicEvents();
+    }
+
+    public List<Event> getUserEvents(User user){
+        return eventDao.getUserEvents(user);
     }
 
     public void registerUser(User user) {

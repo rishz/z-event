@@ -3,6 +3,7 @@ package config;
 import model.Event;
 import model.LoginResult;
 import model.User;
+import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.jetty.util.MultiMap;
 import org.eclipse.jetty.util.UrlEncoded;
 import service.AuthService;
@@ -10,9 +11,7 @@ import spark.ModelAndView;
 import spark.Request;
 import spark.template.freemarker.FreeMarkerEngine;
 import spark.utils.StringUtils;
-import org.apache.commons.beanutils.BeanUtils;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +54,7 @@ public class WebConfig {
             Map<String, Object> map = new HashMap<>();
             map.put("pageTitle", "Events");
             map.put("user", user);
-            List<Event> events = service.getPublicTimelineMessages();
+            List<Event> events = service.getPublicEvents();
             map.put("events", events);
             return new ModelAndView(map, "timeline.ftl");
         }, new FreeMarkerEngine());
@@ -67,7 +66,7 @@ public class WebConfig {
             User authUser = getAuthenticatedUser(req);
             boolean followed = false;
 
-            List<Event> events = service.getUserTimelineMessages(profileUser);
+            List<Event> events = service.getUserEvents(profileUser);
 
             Map<String, Object> map = new HashMap<>();
             map.put("pageTitle", username + "'s Timeline");
@@ -181,33 +180,6 @@ public class WebConfig {
             User authUser = getAuthenticatedUser(req);
             if(authUser != null) {
                 res.redirect("/");
-                halt();
-            }
-        });
-
-
-		/*
-		 * Registers a new message for the user.
-		 */
-        post("/message", (req, res) -> {
-            User user = getAuthenticatedUser(req);
-            MultiMap<String> params = new MultiMap<String>();
-            UrlEncoded.decodeTo(req.body(), params, "UTF-8");
-            Message m = new Message();
-            m.setUserId(user.getId());
-            m.setPubDate(new Date());
-            BeanUtils.populate(m, params);
-            service.addMessage(m);
-            res.redirect("/");
-            return null;
-        });
-		/*
-		 * Checks if the user is authenticated
-		 */
-        before("/message", (req, res) -> {
-            User authUser = getAuthenticatedUser(req);
-            if(authUser == null) {
-                res.redirect("/login");
                 halt();
             }
         });
