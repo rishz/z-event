@@ -17,10 +17,10 @@ public class CommandLineOptions {
         public String dbHost = "localhost";
 
         @Parameter(names = {"--db-username"})
-        public String dbUsername = "abcd1234";
+        public String dbUsername = "eventmanager";
 
         @Parameter(names = {"--db-password"})
-        public String dbPassword = "abcd1234";
+        public String dbPassword = "testpass";
 
         @Parameter(names = {"--db-port"})
         public Integer dbPort = 5432;

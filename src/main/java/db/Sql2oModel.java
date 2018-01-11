@@ -31,7 +31,12 @@ public class Sql2oModel implements DbModel {
                     .addParameter("password", user.getPassword())
                     .executeUpdate();
             conn.commit();
+            System.out.println(userUuid.toString());
             return userUuid;
+        }catch (Exception e){
+            System.out.println(e);
+            e.printStackTrace();
+            return null;
         }
     }
 

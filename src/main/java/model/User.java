@@ -73,4 +73,14 @@ public class User {
         return error;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "user_uuid=" + user_uuid +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", username='" + username + '\'' +
+                ", password2='" + password2 + '\'' +
+                '}';
+    }
 }

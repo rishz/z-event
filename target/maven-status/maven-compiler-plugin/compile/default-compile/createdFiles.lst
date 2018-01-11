@@ -1,10 +1,11 @@
-Server$1.class
 config/WebConfig.class
+dao/AppController.class
 model/LoginResult.class
 db/Sql2oModel.class
 dao/UserDao.class
 utils/Validable.class
 db/DbModel.class
+dao/AppController$1.class
 service/AuthService.class
 utils/UuidGenerator.class
 utils/PasswordUtil.class

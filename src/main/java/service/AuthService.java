@@ -1,7 +1,6 @@
 package service;
 
-import dao.EventDao;
-import dao.UserDao;
+import dao.AppController;
 import model.Event;
 import model.LoginResult;
 import model.User;
@@ -9,16 +8,17 @@ import utils.PasswordUtil;
 
 import java.util.List;
 
-
 public class AuthService {
 
-    private UserDao userDao;
+    private AppController appController;
 
-    private EventDao eventDao;
+    public AuthService(String[] args){
+        appController = new AppController(args);
+    }
 
     public LoginResult checkUser(User user) {
         LoginResult result = new LoginResult();
-        User userFound = userDao.getUserbyUsername(user.getUsername());
+        User userFound = appController.getUserbyUsername(user.getUsername());
         if(userFound == null) {
             result.setError("Invalid username");
         } else if(!PasswordUtil.verifyPassword(user.getPassword(), userFound.getPassword())) {
@@ -31,27 +31,24 @@ public class AuthService {
     }
 
     public List<Event> getPublicEvents(){
-        return eventDao.getPublicEvents();
+        return appController.getPublicEvents();
     }
 
     public List<Event> getUserEvents(User user){
-        return eventDao.getUserEvents(user);
+        return appController.getUserEvents(user);
     }
 
     public void registerUser(User user) {
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
-        userDao.registerUser(user);
-    }
-
-    public void setUserDao(UserDao userDao) {
-        this.userDao = userDao;
+        System.out.println(user.getPassword());
+        appController.registerUser(user);
     }
 
     public User getUserbyUsername(String username) {
-        return userDao.getUserbyUsername(username);
+        return appController.getUserbyUsername(username);
     }
 
     public void addEvent(Event event) {
-        eventDao.insertEvent(event);
+        appController.insertEvent(event);
     }
 }

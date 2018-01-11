@@ -132,7 +132,7 @@ public class WebConfig {
 		/*
 		 * Checks if the user is authenticated
 		 */
-        before("/events", (req, res) -> {
+        before("/event", (req, res) -> {
             User authUser = getAuthenticatedUser(req);
             if(authUser == null) {
                 res.redirect("/login");
@@ -145,6 +145,7 @@ public class WebConfig {
 		 * her timeline if it's already logged in
 		 */
         get("/login", (req, res) -> {
+            System.out.println("GET /login called!");
             Map<String, Object> map = new HashMap<>();
             if(req.queryParams("r") != null) {
                 map.put("message", "You were successfully registered and can login now");
@@ -156,10 +157,12 @@ public class WebConfig {
 		 * Logs the user in.
 		 */
         post("/login", (req, res) -> {
+            System.out.println("POST /login ");
+
             Map<String, Object> map = new HashMap<>();
             User user = new User();
             try {
-                MultiMap<String> params = new MultiMap<String>();
+                MultiMap<String> params = new MultiMap<>();
                 UrlEncoded.decodeTo(req.body(), params, "UTF-8");
                 BeanUtils.populate(user, params);
             } catch (Exception e) {
@@ -183,6 +186,7 @@ public class WebConfig {
 		 */
         before("/login", (req, res) -> {
             User authUser = getAuthenticatedUser(req);
+            System.out.println("BEFORE /login : "+authUser);
             if(authUser != null) {
                 res.redirect("/");
                 halt();
@@ -213,9 +217,12 @@ public class WebConfig {
                 return null;
             }
             String error = user.validate();
-            System.out.println(error);
+            System.out.println("error "+error);
+
             if(StringUtils.isEmpty(error)) {
+                System.out.println("user: "+user.getEmail());
                 User existingUser = service.getUserbyUsername(user.getUsername());
+                System.out.println("existing user"+existingUser);
                 if(existingUser == null) {
                     service.registerUser(user);
                     res.redirect("/login?r=1");

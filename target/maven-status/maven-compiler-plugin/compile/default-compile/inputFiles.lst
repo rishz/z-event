@@ -4,6 +4,7 @@
 /Users/rishabhshukla/Documents/Java/Event-Manager/src/main/java/model/User.java
 /Users/rishabhshukla/Documents/Java/Event-Manager/src/main/java/utils/RandomUuidGenerator.java
 /Users/rishabhshukla/Documents/Java/Event-Manager/src/main/java/model/Event.java
+/Users/rishabhshukla/Documents/Java/Event-Manager/src/main/java/dao/AppController.java
 /Users/rishabhshukla/Documents/Java/Event-Manager/src/main/java/model/LoginResult.java
 /Users/rishabhshukla/Documents/Java/Event-Manager/src/main/java/dao/UserDao.java
 /Users/rishabhshukla/Documents/Java/Event-Manager/src/main/java/service/AuthService.java
