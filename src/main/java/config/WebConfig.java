@@ -12,7 +12,12 @@ import spark.Request;
 import spark.template.freemarker.FreeMarkerEngine;
 import spark.utils.StringUtils;
 
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import static spark.Spark.*;
 
@@ -20,6 +25,8 @@ public class WebConfig {
 
     private static final String USER_SESSION_ID = "user";
     private static final String EVENT_ID = "event";
+    private static final Logger logger = Logger.getLogger(WebConfig.class.getCanonicalName());
+
     private AuthService service;
 
 
@@ -30,6 +37,7 @@ public class WebConfig {
     }
 
     private void setupRoutes() {
+
         get("/", (req, res) -> {
             User user = getAuthenticatedUser(req);
             Map<String, Object> map = new HashMap<>();
@@ -37,6 +45,7 @@ public class WebConfig {
             map.put("user", user);
             return new ModelAndView(map, "timeline.ftl");
         }, new FreeMarkerEngine());
+
         before("/", (req, res) -> {
             User user = getAuthenticatedUser(req);
             if(user == null) {
@@ -61,7 +70,7 @@ public class WebConfig {
 
             Event e = new Event();
             e.setOrganizer(user);
-            e.setDate(Date.parse(req.params("date"));
+            e.setDate(new SimpleDateFormat("dd/MM/yyyy").parse(req.params("date")));
             e.setDescription(req.params("description"));
             e.setCategories(Arrays.asList(req.params("categories").split(",")));
             BeanUtils.populate(e, params);
@@ -94,6 +103,7 @@ public class WebConfig {
             map.put("events", events);
             return new ModelAndView(map, "timeline.ftl");
         }, new FreeMarkerEngine());
+
 		/*
 		 * Checks if the user exists
 		 */
@@ -110,7 +120,7 @@ public class WebConfig {
             MultiMap<String> params = new MultiMap<String>();
             Event e = new Event();
             e.setOrganizer(user);
-            e.setDate(Date.parse(req.params("date"));
+            e.setDate(new SimpleDateFormat("dd/MM/yyyy").parse(req.params("date")));
             e.setDescription(req.params("description"));
             e.setCategories(Arrays.asList(req.params("categories").split(",")));
             BeanUtils.populate(e, params);
@@ -118,18 +128,17 @@ public class WebConfig {
             res.redirect("/");
             return null;
         });
+
 		/*
 		 * Checks if the user is authenticated
 		 */
-        before("/event", (req, res) -> {
+        before("/events", (req, res) -> {
             User authUser = getAuthenticatedUser(req);
             if(authUser == null) {
                 res.redirect("/login");
                 halt();
             }
         });
-
-
 
 		/*
 		 * Presents the login form or redirect the user to
@@ -142,6 +151,7 @@ public class WebConfig {
             }
             return new ModelAndView(map, "login.ftl");
         }, new FreeMarkerEngine());
+
 		/*
 		 * Logs the user in.
 		 */
@@ -167,6 +177,7 @@ public class WebConfig {
             map.put("username", user.getUsername());
             return new ModelAndView(map, "login.ftl");
         }, new FreeMarkerEngine());
+
 		/*
 		 * Checks if the user is already authenticated
 		 */
@@ -178,7 +189,6 @@ public class WebConfig {
             }
         });
 
-
 		/*
 		 * Presents the register form or redirect the user to
 		 * her timeline if it's already logged in
@@ -187,6 +197,7 @@ public class WebConfig {
             Map<String, Object> map = new HashMap<>();
             return new ModelAndView(map, "register.ftl");
         }, new FreeMarkerEngine());
+
 		/*
 		 * Registers the user.
 		 */
@@ -194,7 +205,7 @@ public class WebConfig {
             Map<String, Object> map = new HashMap<>();
             User user = new User();
             try {
-                MultiMap<String> params = new MultiMap<String>();
+                MultiMap<String> params = new MultiMap<>();
                 UrlEncoded.decodeTo(req.body(), params, "UTF-8");
                 BeanUtils.populate(user, params);
             } catch (Exception e) {
@@ -217,6 +228,7 @@ public class WebConfig {
             map.put("email", user.getEmail());
             return new ModelAndView(map, "register.ftl");
         }, new FreeMarkerEngine());
+
 		/*
 		 * Checks if the user is already authenticated
 		 */
@@ -227,7 +239,6 @@ public class WebConfig {
                 halt();
             }
         });
-
 
 		/*
 		 * Logs the user out and redirects to the public timeline
@@ -245,7 +256,6 @@ public class WebConfig {
 
     private void removeAuthenticatedUser(Request request) {
         request.session().removeAttribute(USER_SESSION_ID);
-
     }
 
     private User getAuthenticatedUser(Request request) {

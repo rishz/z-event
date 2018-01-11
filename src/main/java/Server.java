@@ -21,8 +21,6 @@ import static spark.Spark.port;
 public class Server implements EventDao, UserDao{
     private static final Logger logger = Logger.getLogger(Server.class.getCanonicalName());
 
-    private static final int HTTP_BAD_REQUEST = 400;
-
     private static Sql2oModel dbModel;
 
     public static void main(String[] args) {
