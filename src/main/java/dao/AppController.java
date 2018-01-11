@@ -47,13 +47,11 @@ public class AppController implements UserDao, EventDao{
 
     @Override
     public User getUserbyUsername(String username) {
-        System.out.println("getUserbyUsername called!!!");
-        return null;
+        return dbModel.getUserByUsername(username);
     }
 
     @Override
     public void registerUser(User user) {
-        System.out.println("REGISTER USER CALLED");
         dbModel.createUser(user);
     }
 

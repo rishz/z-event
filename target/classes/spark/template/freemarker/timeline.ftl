@@ -1,6 +1,6 @@
 <#import "masterTemplate.ftl" as layout />
 
-<@layout.masterTemplate title="Timeline">
+<@layout.masterTemplate title="Events">
 
 <div class="row">
     <div class="col-xs-11">
@@ -18,15 +18,18 @@
             <#elseif pageTitle != 'Public Timeline'>
                 <div class="panel panel-info">
                     <div class="panel-heading">
-                        <h3 class="panel-title">What's on your mind ${user.username}?</h3>
+                        <h3 class="panel-title">Create an event ${user.username}!</h3>
                     </div>
 
                     <div class="panel-body">
-                        <form class="form-horizontal" action="/message" method="post">
+                        <form class="form-horizontal" action="/event" method="post">
                             <div class="input-group">
-                                <input type="text" name="text" class="form-control" required/>
+                                <input type="text" name="text" placeholder="What's the name of event<" class="form-control" required/>
+                                <input type="text" name="description" placeholder="What is it about?" class="form-control" required/>
+                                <input type="date" name="date" placeholder="When is it happening?" class="form-control" required/>
+                                <input type="text" name="categories" placeholder="Enter comma separated tags" class="form-control" />
                                 <span class="input-group-btn">
-                                    <button class="btn btn-primary" type="submit"> Share </button>
+                                    <button class="btn btn-primary" type="submit"> Create </button>
                                 </span>
                             </div>
                         </form>

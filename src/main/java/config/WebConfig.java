@@ -41,9 +41,9 @@ public class WebConfig {
         get("/", (req, res) -> {
             User user = getAuthenticatedUser(req);
             Map<String, Object> map = new HashMap<>();
-            map.put("pageTitle", "Timeline");
+            map.put("pageTitle", "Events");
             map.put("user", user);
-            return new ModelAndView(map, "timeline.ftl");
+            return new ModelAndView(map, "events.ftl");
         }, new FreeMarkerEngine());
 
         before("/", (req, res) -> {
@@ -61,12 +61,12 @@ public class WebConfig {
             map.put("user", user);
             List<Event> events = service.getPublicEvents();
             map.put("events", events);
-            return new ModelAndView(map, "timeline.ftl");
+            return new ModelAndView(map, "events.ftl");
         }, new FreeMarkerEngine());
 
         put("/:event_uuid", (req,res) -> {
             User user = getAuthenticatedUser(req);
-            MultiMap<String> params = new MultiMap<String>();
+            MultiMap<String> params = new MultiMap<>();
 
             Event e = new Event();
             e.setOrganizer(user);
@@ -78,13 +78,13 @@ public class WebConfig {
             Map<String, Object> map = new HashMap<>();
             map.put("pageTitle", "Event Updated");
             map.put("event", e);
-            return new ModelAndView(map, "timeline.ftl");
+            return new ModelAndView(map, "events.ftl");
         });
 
         delete("/:event_uuid", (req,res) -> {
             Map<String, Object> map = new HashMap<>();
             map.put("pageTitle", "Event Deleted");
-            return new ModelAndView(map, "timeline.ftl");
+            return new ModelAndView(map, "events.ftl");
 
         });
 
@@ -97,11 +97,11 @@ public class WebConfig {
             List<Event> events = service.getUserEvents(profileUser);
 
             Map<String, Object> map = new HashMap<>();
-            map.put("pageTitle", username + "'s Timeline");
+            map.put("pageTitle", username + "'s events");
             map.put("user", authUser);
             map.put("profileUser", profileUser);
             map.put("events", events);
-            return new ModelAndView(map, "timeline.ftl");
+            return new ModelAndView(map, "events.ftl");
         }, new FreeMarkerEngine());
 
 		/*
@@ -117,7 +117,7 @@ public class WebConfig {
 
         post("/event", (req, res) -> {
             User user = getAuthenticatedUser(req);
-            MultiMap<String> params = new MultiMap<String>();
+            MultiMap<String> params = new MultiMap<>();
             Event e = new Event();
             e.setOrganizer(user);
             e.setDate(new SimpleDateFormat("dd/MM/yyyy").parse(req.params("date")));
@@ -142,7 +142,7 @@ public class WebConfig {
 
 		/*
 		 * Presents the login form or redirect the user to
-		 * her timeline if it's already logged in
+		 * her events if it's already logged in
 		 */
         get("/login", (req, res) -> {
             System.out.println("GET /login called!");
@@ -195,7 +195,7 @@ public class WebConfig {
 
 		/*
 		 * Presents the register form or redirect the user to
-		 * her timeline if it's already logged in
+		 * her events if it's already logged in
 		 */
         get("/register", (req, res) -> {
             Map<String, Object> map = new HashMap<>();
@@ -249,7 +249,7 @@ public class WebConfig {
         });
 
 		/*
-		 * Logs the user out and redirects to the public timeline
+		 * Logs the user out and redirects to the public events
 		 */
         get("/logout", (req, res) -> {
             removeAuthenticatedUser(req);

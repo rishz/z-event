@@ -13,7 +13,8 @@ public interface DbModel {
     List getAllEvents();
     List getAllGoingUsers(UUID event);
     List getAllInterestedUsers(UUID event);
-    boolean existEvent(UUID event);
+    boolean existUser(String username);
+    User getUserByUsername(String username);
     void addGoingUser(String username, UUID event);
     void addInterestedUser(String username, UUID event);
 }

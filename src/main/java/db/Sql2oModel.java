@@ -96,12 +96,26 @@ public class Sql2oModel implements DbModel {
     }
 
     @Override
-    public boolean existEvent(UUID event) {
+    public boolean existUser(String username) {
         try (Connection conn = sql2o.open()) {
-            List<Event> events = conn.createQuery("select * from events where event_uuid=:event")
-                    .addParameter("event", event)
-                    .executeAndFetch(Event.class);
-            return events.size() > 0;
+            User user =  conn.createQuery("select * from users where username=:username")
+                    .addParameter("username", username)
+                    .executeAndFetchFirst(User.class);
+            return user!=null;
+        }
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        if(existUser(username)){
+            try (Connection conn = sql2o.open()) {
+                return conn.createQuery("select * from users where username=:username")
+                        .addParameter("username", username)
+                        .executeAndFetchFirst(User.class);
+            }
+        }else {
+            System.out.println("User doesn't exist");
+            return null;
         }
     }
 
