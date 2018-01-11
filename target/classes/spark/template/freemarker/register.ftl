@@ -13,9 +13,9 @@
     <form class="form-horizontal" action="/register" role="form" method="post">
 
         <div class="form-group">
-            <label for="email" class="col-sm-2 control-label">Username: </label>
+            <label for="username" class="col-sm-2 control-label">Username: </label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" username="email" placeholder="Username" value="${email!}" />
+                <input type="text" class="form-control" username="username" placeholder="Username" value="${username!}" />
             </div>
         </div>
 

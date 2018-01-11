@@ -60,8 +60,8 @@ public class User {
     public String validate() {
         String error = null;
 
-        if(StringUtils.isEmpty(email)) {
-            error = "You have to enter a email";
+        if(StringUtils.isEmpty(username)) {
+            error = "You have to enter a username";
         } else if(!EMAIL_ADDRESS_REGEX.matcher(email).matches()) {
             error = "You have to enter a valid email address";
         } else if(StringUtils.isEmpty(password)) {

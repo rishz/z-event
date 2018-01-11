@@ -213,6 +213,7 @@ public class WebConfig {
                 return null;
             }
             String error = user.validate();
+            System.out.println(error);
             if(StringUtils.isEmpty(error)) {
                 User existingUser = service.getUserbyUsername(user.getUsername());
                 if(existingUser == null) {

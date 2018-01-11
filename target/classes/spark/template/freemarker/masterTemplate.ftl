@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta username="viewport" content="width=device-width, initial-scale=1">
 
-    <title>${title} | MiniTwit</title>
+    <title>${title} | Event-Manager</title>
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
@@ -22,17 +22,15 @@
                 <span class="icon-bar"></span>
             </button>
 
-            <a class="navbar-brand" href="/">MiniTwit</a>
+            <a class="navbar-brand" href="/">Event-Manager</a>
         </div>
 
         <div class="collapse navbar-collapse" id="example-navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
                 <#if user??>
                     <li><a href="/">My Timeline</a></li>
-                    <li><a href="/public">Public Timeline</a></li>
                     <li><a href="/logout">Sign Out [${user.email}]</a></li>
                 <#else>
-                    <li><a href="/public">Public Timeline</a></li>
                     <li><a href="/register">Sign Up</a></li>
                     <li><a href="/login">Sign In</a></li>
                 </#if>
@@ -45,7 +43,7 @@
     </div>
 
     <footer class="footer">
-        <p>MiniTwit &mdash; A Spark Application</p>
+        <p>Event-Manager &mdash; A Spark Application</p>
     </footer>
 </div><!-- /container -->
 </body>
