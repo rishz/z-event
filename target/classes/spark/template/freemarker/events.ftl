@@ -6,11 +6,6 @@
     <div class="col-xs-11">
         <h3>${pageTitle}</h3>
 
-   <#if message??>
-    	<div class="alert alert-success">
-    		${message}
-    	</div>
-    </#if>
         <#if user??>
             <#if profileUser?? && user.id != profileUser.id>
                 <div class="pull-right">
@@ -29,7 +24,7 @@
                     <div class="panel-body">
                         <form class="form-horizontal" action="/event" method="post">
                             <div class="input-group">
-                                <input type="text" name="name" placeholder="What's the name of event?" class="form-control" required/>
+                                <input type="text" name="text" placeholder="What's the name of event<" class="form-control" required/>
                                 <input type="text" name="description" placeholder="What is it about?" class="form-control" required/>
                                 <input type="date" name="date" placeholder="When is it happening?" class="form-control" required/>
                                 <input type="text" name="categories" placeholder="Enter comma separated tags" class="form-control" />

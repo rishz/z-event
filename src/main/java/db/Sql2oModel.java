@@ -58,6 +58,9 @@ public class Sql2oModel implements DbModel {
                             .executeUpdate());
             conn.commit();
             return event_uuid;
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return null;
         }
     }
 

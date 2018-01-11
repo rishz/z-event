@@ -49,6 +49,7 @@ public class AuthService {
     }
 
     public void addEvent(Event event) {
+        System.out.println("ADD EVENT CALLED");
         appController.insertEvent(event);
     }
 }

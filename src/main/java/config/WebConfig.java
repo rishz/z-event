@@ -43,6 +43,9 @@ public class WebConfig {
             Map<String, Object> map = new HashMap<>();
             map.put("pageTitle", "Events");
             map.put("user", user);
+            if(req.queryParams("r") != null) {
+                map.put("message", "You have successfully created an event");
+            }
             return new ModelAndView(map, "events.ftl");
         }, new FreeMarkerEngine());
 
@@ -85,7 +88,6 @@ public class WebConfig {
             Map<String, Object> map = new HashMap<>();
             map.put("pageTitle", "Event Deleted");
             return new ModelAndView(map, "events.ftl");
-
         });
 
         get("/t/:username", (req, res) -> {
@@ -117,6 +119,14 @@ public class WebConfig {
 
         post("/event", (req, res) -> {
             User user = getAuthenticatedUser(req);
+//            try {
+//                MultiMap<String> params = new MultiMap<>();
+//                UrlEncoded.decodeTo(req.body(), params, "UTF-8");
+//                BeanUtils.populate(ev, params);
+//            } catch (Exception e) {
+//                halt(501);
+//                return null;
+//            }
             MultiMap<String> params = new MultiMap<>();
             Event e = new Event();
             e.setOrganizer(user);
@@ -125,7 +135,7 @@ public class WebConfig {
             e.setCategories(Arrays.asList(req.params("categories").split(",")));
             BeanUtils.populate(e, params);
             service.addEvent(e);
-            res.redirect("/");
+            res.redirect("/?r=1");
             return null;
         });
 
