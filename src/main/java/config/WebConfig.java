@@ -1,5 +1,9 @@
 package config;
 
+import io.swagger.annotations.Contact;
+import io.swagger.annotations.Info;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
 import model.Event;
 import model.LoginResult;
 import model.User;
@@ -14,6 +18,7 @@ import spark.ModelAndView;
 import spark.Request;
 import spark.template.freemarker.FreeMarkerEngine;
 import spark.utils.StringUtils;
+import utils.SwaggerParser;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -21,11 +26,23 @@ import java.util.logging.Logger;
 
 import static spark.Spark.*;
 
+
+@SwaggerDefinition(host = "localhost:4567", //
+        info = @Info(description = "Event-Manager API", //
+                version = "V1.0", //
+                title = "Event-Manager", //
+                contact = @Contact(name = "abc") ) , //
+        schemes = { SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS }, //
+        consumes = { "application/json" }, //
+        produces = { "application/json" }, //
+        tags = { @Tag(name = "swagger") })
+
 public class WebConfig {
 
     private static final String USER_SESSION_ID = "user";
     private static final String EVENT_ID = "event";
     private static final Logger logger = Logger.getLogger(WebConfig.class.getCanonicalName());
+    public static final String APP_PACKAGE = "";
 
     private AuthService service;
 
@@ -39,7 +56,6 @@ public class WebConfig {
     private void setupRoutes() {
 
         get("/", (req, res) -> {
-            System.out.println("GET /");
             User user = getAuthenticatedUser(req);
             Map<String, Object> map = new HashMap<>();
             map.put("pageTitle", "Events");
@@ -49,7 +65,6 @@ public class WebConfig {
                 map.put("message", "You have successfully created an event");
             }
             map.put("events", events);
-            System.out.println("GET / EVENTS: "+events);
             return new ModelAndView(map, "events.ftl");
         }, new FreeMarkerEngine());
 
@@ -62,7 +77,6 @@ public class WebConfig {
         });
 
         get("/events", (req, res) -> {
-            System.out.println("GET /events");
             User user = getAuthenticatedUser(req);
             Map<String, Object> map = new HashMap<>();
             map.put("pageTitle", "Events");
@@ -127,9 +141,7 @@ public class WebConfig {
         });
 
         post("/event", (req, res) -> {
-            System.out.println("POST /event ");
             User user = getAuthenticatedUser(req);
-            System.out.println(user);
 
             Event e = new Event();
             try {
@@ -147,7 +159,6 @@ public class WebConfig {
                 return null;
             }
             e.setOrganizer(user.getUsername());
-            System.out.println(e);
 //            BeanUtils.populate(e, params);
             service.addEvent(e);
             res.redirect("/events?r=1");
@@ -170,7 +181,6 @@ public class WebConfig {
 		 * her events if it's already logged in
 		 */
         get("/login", (req, res) -> {
-            System.out.println("GET /login called!");
             Map<String, Object> map = new HashMap<>();
             if(req.queryParams("r") != null) {
                 map.put("message", "You were successfully registered and can login now");
@@ -182,7 +192,6 @@ public class WebConfig {
 		 * Logs the user in.
 		 */
         post("/login", (req, res) -> {
-            System.out.println("POST /login ");
 
             Map<String, Object> map = new HashMap<>();
             User user = new User();
@@ -211,7 +220,6 @@ public class WebConfig {
 		 */
         before("/login", (req, res) -> {
             User authUser = getAuthenticatedUser(req);
-            System.out.println("BEFORE /login : "+authUser);
             if(authUser != null) {
                 res.redirect("/");
                 halt();
@@ -242,12 +250,9 @@ public class WebConfig {
                 return null;
             }
             String error = user.validate();
-            System.out.println("error "+error);
 
             if(StringUtils.isEmpty(error)) {
-                System.out.println("user: "+user.getEmail());
                 User existingUser = service.getUserbyUsername(user.getUsername());
-                System.out.println("existing user"+existingUser);
                 if(existingUser == null) {
                     service.registerUser(user);
                     res.redirect("/login?r=1");
@@ -281,6 +286,16 @@ public class WebConfig {
             res.redirect("/login");
             return null;
         });
+
+        try {
+            // Build swagger json description
+            final String swaggerJson = SwaggerParser.getSwaggerJson(APP_PACKAGE);
+            get("/swagger", (req, res) -> swaggerJson);
+
+        } catch (Exception e) {
+            System.err.println(e);
+            e.printStackTrace();
+        }
     }
 
     private void addAuthenticatedUser(Request request, User u) {
