@@ -6,16 +6,12 @@
     <div class="col-xs-11">
         <h3>${pageTitle}</h3>
 
+   <#if message??>
+    	<div class="alert alert-success">
+    		${message}
+    	</div>
+    </#if>
         <#if user??>
-            <#if profileUser?? && user.id != profileUser.id>
-                <div class="pull-right">
-                    <#if followed>
-                        <a class="btn btn-warning" href="/t/${profileUser.username}/unfollow">Unfollow User</a>
-                    <#else>
-                        <a class="btn btn-primary" href="/t/${profileUser.username}/follow">Follow User</a>.
-                    </#if>
-                </div>
-            <#elseif pageTitle != 'Public Events'>
                 <div class="panel panel-info">
                     <div class="panel-heading">
                         <h3 class="panel-title">Create an event ${user.username}!</h3>
@@ -24,7 +20,7 @@
                     <div class="panel-body">
                         <form class="form-horizontal" action="/event" method="post">
                             <div class="input-group">
-                                <input type="text" name="text" placeholder="What's the name of event<" class="form-control" required/>
+                                <input type="text" name="name" placeholder="What's the name of event?" class="form-control" required/>
                                 <input type="text" name="description" placeholder="What is it about?" class="form-control" required/>
                                 <input type="date" name="date" placeholder="When is it happening?" class="form-control" required/>
                                 <input type="text" name="categories" placeholder="Enter comma separated tags" class="form-control" />
@@ -35,7 +31,6 @@
                         </form>
                     </div>
                 </div>
-            </#if>
         </#if>
     </div>
 </div>
@@ -48,8 +43,11 @@
                     <hr/>
 
                     <div class="media">
+
                         <a class="pull-left" href="/t/${event.name}">
-                            <img class="media-object" src="${event.gravatar}"/>
+                            <h3>
+                                ${event.name}
+                            </h3>
                         </a>
                         <div class="media-body">
                             <h4 class="media-heading">
@@ -61,6 +59,11 @@
                         ${event.description} <br/>
 
                             <small>&mdash; ${event.date}</small>
+                        </div>
+
+                        <div class="pull-right">
+                                       <a class="btn btn-warning" href="/t/${event.name}/going">Going</a>
+                                       <a class="btn btn-primary" href="/t/${event.name}/interested">Interested</a>.
                         </div>
                     </div>
                 <#else>

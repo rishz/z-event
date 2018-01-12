@@ -18,4 +18,5 @@ public class CommonUtils {
             throw new RuntimeException("IOException from a StringWriter?");
         }
     }
+
 }

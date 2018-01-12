@@ -15,5 +15,6 @@ dao/EventDao.class
 model/User.class
 Server.class
 utils/RandomUuidGenerator.class
+utils/TypeConverter.class
 utils/CommandLineOptions.class
 model/Event.class

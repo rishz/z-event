@@ -4,6 +4,9 @@ import model.Event;
 import model.LoginResult;
 import model.User;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.converters.DateConverter;
+import org.apache.commons.beanutils.converters.DateTimeConverter;
 import org.eclipse.jetty.util.MultiMap;
 import org.eclipse.jetty.util.UrlEncoded;
 import service.AuthService;
@@ -13,10 +16,7 @@ import spark.template.freemarker.FreeMarkerEngine;
 import spark.utils.StringUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static spark.Spark.*;
@@ -39,31 +39,39 @@ public class WebConfig {
     private void setupRoutes() {
 
         get("/", (req, res) -> {
+            System.out.println("GET /");
             User user = getAuthenticatedUser(req);
             Map<String, Object> map = new HashMap<>();
             map.put("pageTitle", "Events");
             map.put("user", user);
+            List<Event> events = service.getPublicEvents();
             if(req.queryParams("r") != null) {
                 map.put("message", "You have successfully created an event");
             }
+            map.put("events", events);
+            System.out.println("GET / EVENTS: "+events);
             return new ModelAndView(map, "events.ftl");
         }, new FreeMarkerEngine());
 
         before("/", (req, res) -> {
             User user = getAuthenticatedUser(req);
             if(user == null) {
-                res.redirect("/events");
+                res.redirect("/login");
                 halt();
             }
         });
 
         get("/events", (req, res) -> {
+            System.out.println("GET /events");
             User user = getAuthenticatedUser(req);
             Map<String, Object> map = new HashMap<>();
             map.put("pageTitle", "Events");
             map.put("user", user);
             List<Event> events = service.getPublicEvents();
             map.put("events", events);
+            if(req.queryParams("r") != null) {
+                map.put("message", "You have successfully created an event");
+            }
             return new ModelAndView(map, "events.ftl");
         }, new FreeMarkerEngine());
 
@@ -72,7 +80,7 @@ public class WebConfig {
             MultiMap<String> params = new MultiMap<>();
 
             Event e = new Event();
-            e.setOrganizer(user);
+            e.setOrganizer(user.getUsername());
             e.setDate(new SimpleDateFormat("dd/MM/yyyy").parse(req.params("date")));
             e.setDescription(req.params("description"));
             e.setCategories(Arrays.asList(req.params("categories").split(",")));
@@ -86,7 +94,8 @@ public class WebConfig {
 
         delete("/:event_uuid", (req,res) -> {
             Map<String, Object> map = new HashMap<>();
-            map.put("pageTitle", "Event Deleted");
+            map.put("pageTitle", "Events");
+            map.put("message", "Event deleted successfully");
             return new ModelAndView(map, "events.ftl");
         });
 
@@ -118,24 +127,30 @@ public class WebConfig {
         });
 
         post("/event", (req, res) -> {
+            System.out.println("POST /event ");
             User user = getAuthenticatedUser(req);
-//            try {
-//                MultiMap<String> params = new MultiMap<>();
-//                UrlEncoded.decodeTo(req.body(), params, "UTF-8");
-//                BeanUtils.populate(ev, params);
-//            } catch (Exception e) {
-//                halt(501);
-//                return null;
-//            }
-            MultiMap<String> params = new MultiMap<>();
+            System.out.println(user);
+
             Event e = new Event();
-            e.setOrganizer(user);
-            e.setDate(new SimpleDateFormat("dd/MM/yyyy").parse(req.params("date")));
-            e.setDescription(req.params("description"));
-            e.setCategories(Arrays.asList(req.params("categories").split(",")));
-            BeanUtils.populate(e, params);
+            try {
+                MultiMap<String> params = new MultiMap<>();
+                UrlEncoded.decodeTo(req.body(), params, "UTF-8");
+
+                DateTimeConverter dtConverter = new DateConverter();
+                dtConverter.setPattern("yyyy-MM-dd");
+                ConvertUtils.register(dtConverter, Date.class);
+
+                BeanUtils.populate(e, params);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                halt(501);
+                return null;
+            }
+            e.setOrganizer(user.getUsername());
+            System.out.println(e);
+//            BeanUtils.populate(e, params);
             service.addEvent(e);
-            res.redirect("/?r=1");
+            res.redirect("/events?r=1");
             return null;
         });
 
@@ -263,7 +278,7 @@ public class WebConfig {
 		 */
         get("/logout", (req, res) -> {
             removeAuthenticatedUser(req);
-            res.redirect("/public");
+            res.redirect("/login");
             return null;
         });
     }

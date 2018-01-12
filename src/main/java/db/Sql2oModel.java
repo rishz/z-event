@@ -70,7 +70,11 @@ public class Sql2oModel implements DbModel {
             List<Event> events = conn.createQuery("select * from events")
                     .executeAndFetch(Event.class);
             events.forEach((event) -> event.setCategories(getCategoriesFor(conn, event.getEvent_uuid())));
+            System.out.println(events);
             return events;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
         }
     }
 
