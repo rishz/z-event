@@ -35,8 +35,14 @@ public class AppController implements UserDao, EventDao{
 
         port(options.servicePort);
 
-        Sql2o sql2o = new Sql2o("jdbc:postgresql://" + options.dbHost + ":" + options.dbPort + "/" + options.database,
-                options.dbUsername, options.dbPassword, new PostgresQuirks() {
+//        Sql2o sql2o = new Sql2o("jdbc:postgresql://" + options.dbHost + ":" + options.dbPort + "/" + options.database,
+//                options.dbUsername, options.dbPassword, new PostgresQuirks() {
+//            {
+//                converters.put(UUID.class, new UUIDConverter());
+//            }
+//        });
+        Sql2o sql2o = new Sql2o("jdbc:postgresql://ec2-23-23-110-26.compute-1.amazonaws.com:5432/d77l275udotqkm",
+                "lukhrwwuhmzshz", "0d05578accf9531f810085d616f8e325928c6db0c82d84396aadeec051470ce6", new PostgresQuirks() {
             {
                 converters.put(UUID.class, new UUIDConverter());
             }

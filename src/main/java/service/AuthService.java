@@ -22,7 +22,8 @@ public class AuthService {
         if(userFound == null) {
             result.setError("Invalid username");
         } else if(!PasswordUtil.verifyPassword(user.getPassword(), userFound.getPassword())) {
-            result.setError("Invalid password");
+            result.setError("In" +
+                    "valid password");
         } else {
             result.setUser(userFound);
         }
