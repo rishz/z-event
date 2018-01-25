@@ -1,5 +1,5 @@
 # z-event
-An Event Manager
+An Event Manager Web App
 
 <a href="https://github.com/rishz/z-event/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-MIT-red.svg" alt="license"/></a>
 
@@ -31,7 +31,7 @@ edit and delete events and giving the users the option to attend or pass on the 
 ```
 4. Create Table Users, Events and Event_Categories
 ```
-> CREATE TABLE users
+> CREATE TABLE users(
 > user_uuid UUID PRIMARY KEY NOT NULL,
 > username CHAR(255) NOT NULL,
 > email CHAR(255) NOT NULL,
